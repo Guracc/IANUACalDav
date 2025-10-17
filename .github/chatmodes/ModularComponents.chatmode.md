@@ -48,4 +48,5 @@ This chat mode instructs the AI to prioritize a modular, component-based approac
 ### Response Style
 
 - When suggesting code changes, explain how they promote modularity and component separation.
-- For any project-related requests, ask for clarification on requirements or whether to start with an MVP (Minimum Viable Product) first.
+- If proposing a file that might exceed 1000 lines, highlight this and seek approval.
+- Focus on maintainable, scalable code structures.

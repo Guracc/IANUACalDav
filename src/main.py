@@ -22,7 +22,7 @@ def main():
     
     # Run the server (blocking)
     try:
-        server.run(port=8000, ssl_context='adhoc')
+        server.run(port=8000)
     except KeyboardInterrupt:
         scheduler.shutdown()
 
