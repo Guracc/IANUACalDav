@@ -9,8 +9,13 @@ from src.scraper.scraper import scrape_events
 from src.caldav_server.server import setup_caldav_server
 
 def main():
-    # Initial scrape
-    events, subscriptions = scrape_events()
+    try:
+        # Initial scrape
+        events, subscriptions = scrape_events()
+        print(f"Successfully scraped {len(events)} events")
+    except Exception as e:
+        print(f"Scraping failed: {e}. Starting server with empty events.")
+        events, subscriptions = [], []
     
     # Setup CalDav server with events
     server = setup_caldav_server(events, subscriptions)
@@ -27,8 +32,12 @@ def main():
         scheduler.shutdown()
 
 def update_calendar(server):
-    events, subscriptions = scrape_events()
-    server.update_events(events, subscriptions)
+    try:
+        events, subscriptions = scrape_events()
+        server.update_events(events, subscriptions)
+        print(f"Updated with {len(events)} events")
+    except Exception as e:
+        print(f"Update failed: {e}")
 
 if __name__ == "__main__":
     main()
