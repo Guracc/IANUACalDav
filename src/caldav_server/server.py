@@ -68,16 +68,18 @@ class CalDavServer:
         def list_calendars():
             """List available calendar subscriptions."""
             base_url = request.host_url.rstrip('/')
+            host_port = base_url[7:]  # Remove 'http://' to get host:port
             html = "<h1>Abbonamenti Calendario IANUA</h1><ul>"
             
             # Full calendar
             full_url = f"{base_url}/calendar.ics"
+            webcal_full = f"webcal://{host_port}/calendar.ics"
             html += f'''
             <li>
                 <strong>Calendario Completo (Tutti gli Eventi)</strong><br>
                 <a href="{full_url}">Scarica .ics</a> |
-                <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar.ics">Aggiungi a Google Calendar</a> |
-                <a href="webcal://{base_url}/calendar.ics">Aggiungi a iCloud Calendar</a>
+                <a href="https://calendar.google.com/calendar/u/0/r?cid={webcal_full}">Aggiungi a Google Calendar</a> |
+                <a href="{webcal_full}">Aggiungi a iCloud Calendar</a>
             </li>
             '''
             
@@ -92,12 +94,13 @@ class CalDavServer:
                 for sub_name in sorted(classes[class_name]):
                     slug = self._create_slug(sub_name)
                     cal_url = f"{base_url}/calendar/{slug}.ics"
+                    webcal_url = f"webcal://{host_port}/calendar/{slug}.ics"
                     html += f'''
                     <li>
                         <strong>{sub_name}</strong><br>
                         <a href="{cal_url}">Scarica .ics</a> |
-                        <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar/{slug}.ics">Aggiungi a Google Calendar</a> |
-                        <a href="webcal://{base_url}/calendar/{slug}.ics">Aggiungi a iCloud Calendar</a>
+                        <a href="https://calendar.google.com/calendar/u/0/r?cid={webcal_url}">Aggiungi a Google Calendar</a> |
+                        <a href="{webcal_url}">Aggiungi a iCloud Calendar</a>
                     </li>
                     '''
                 html += "</ul></li>"
