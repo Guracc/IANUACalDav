@@ -35,7 +35,7 @@ After=network.target
 Type=simple
 User=$USER
 WorkingDirectory=$REPO_DIR
-ExecStart=/home/ubuntu/IANUACalDav/venv/bin/python main.py
+ExecStart=$VENV_DIR/bin/python main.py
 Restart=always
 RestartSec=5
 
