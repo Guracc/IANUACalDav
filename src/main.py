@@ -20,9 +20,9 @@ def main():
     scheduler.add_job(lambda: update_calendar(server), 'interval', hours=1)
     scheduler.start()
     
-    # Run the server (blocking) on standard HTTP port for Cloudflare
+    # Run the server (blocking) on port 8000 for nginx proxy
     try:
-        server.run(port=80)
+        server.run(port=8000)
     except KeyboardInterrupt:
         scheduler.shutdown()
 
