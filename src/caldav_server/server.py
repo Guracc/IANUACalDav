@@ -68,16 +68,16 @@ class CalDavServer:
         def list_calendars():
             """List available calendar subscriptions."""
             base_url = request.host_url.rstrip('/')
-            html = "<h1>IANUA Calendar Subscriptions</h1><ul>"
+            html = "<h1>Abbonamenti Calendario IANUA</h1><ul>"
             
             # Full calendar
             full_url = f"{base_url}/calendar.ics"
             html += f'''
             <li>
-                <strong>Full Calendar (All Events)</strong><br>
-                <a href="{full_url}">Download .ics</a> |
-                <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar.ics">Add to Google Calendar</a> |
-                <a href="webcal://{base_url}/calendar.ics">Add to iCloud Calendar</a>
+                <strong>Calendario Completo (Tutti gli Eventi)</strong><br>
+                <a href="{full_url}">Scarica .ics</a> |
+                <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar.ics">Aggiungi a Google Calendar</a> |
+                <a href="webcal://{base_url}/calendar.ics">Aggiungi a iCloud Calendar</a>
             </li>
             '''
             
@@ -95,9 +95,9 @@ class CalDavServer:
                     html += f'''
                     <li>
                         <strong>{sub_name}</strong><br>
-                        <a href="{cal_url}">Download .ics</a> |
-                        <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar/{slug}.ics">Add to Google Calendar</a> |
-                        <a href="webcal://{base_url}/calendar/{slug}.ics">Add to iCloud Calendar</a>
+                        <a href="{cal_url}">Scarica .ics</a> |
+                        <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar/{slug}.ics">Aggiungi a Google Calendar</a> |
+                        <a href="webcal://{base_url}/calendar/{slug}.ics">Aggiungi a iCloud Calendar</a>
                     </li>
                     '''
                 html += "</ul></li>"
