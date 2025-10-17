@@ -65,11 +65,32 @@ class CalDavServer:
         @self.app.route('/calendars')
         def list_calendars():
             """List available calendar subscriptions."""
+            base_url = request.host_url.rstrip('/')
             html = "<h1>IANUA Calendar Subscriptions</h1><ul>"
-            html += '<li><a href="/calendar.ics">Full Calendar (All Events)</a></li>'
+            
+            # Full calendar
+            full_url = f"{base_url}/calendar.ics"
+            html += f'''
+            <li>
+                <strong>Full Calendar (All Events)</strong><br>
+                <a href="{full_url}">Download .ics</a> |
+                <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar.ics">Add to Google Calendar</a> |
+                <a href="webcal://{base_url}/calendar.ics">Add to iCloud Calendar</a>
+            </li>
+            '''
+            
+            # Individual subscriptions
             for sub_name in sorted(self.subscription_events.keys()):
                 slug = self._create_slug(sub_name)
-                html += f'<li><a href="/calendar/{slug}.ics">{sub_name}</a></li>'
+                cal_url = f"{base_url}/calendar/{slug}.ics"
+                html += f'''
+                <li>
+                    <strong>{sub_name}</strong><br>
+                    <a href="{cal_url}">Download .ics</a> |
+                    <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar/{slug}.ics">Add to Google Calendar</a> |
+                    <a href="webcal://{base_url}/calendar/{slug}.ics">Add to iCloud Calendar</a>
+                </li>
+                '''
             html += "</ul>"
             return Response(html, mimetype='text/html')
     
