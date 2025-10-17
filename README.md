@@ -32,6 +32,30 @@ A Python server-side application that scrapes a website for event data and autom
    ```
 3. Subscribe to the calendar at `http://localhost:5000/calendar.ics` in your calendar app
 
+## Production Deployment (Ubuntu with systemd)
+
+1. Clone the repository on your Ubuntu server
+2. Run the deployment script:
+   ```bash
+   ./deploy.sh
+   ```
+   This will:
+   - Stop any running instance
+   - Pull latest updates
+   - Install dependencies
+   - Set up systemd service
+   - Start the service
+
+3. Check service status:
+   ```bash
+   sudo systemctl status ianuacaldav
+   ```
+
+4. View logs:
+   ```bash
+   sudo journalctl -u ianuacaldav -f
+   ```
+
 ## Project Structure
 
 - `src/scraper/`: Web scraping functionality
