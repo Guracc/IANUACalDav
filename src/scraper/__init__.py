@@ -1,0 +1,1 @@
+# Scraper module for extracting event data from websites
