@@ -16,26 +16,27 @@ class CalDavServer:
     Simple CalDav-like server using Flask to serve iCal calendars.
     """
     
-    def __init__(self, events: List[Dict[str, Any]] = None):
+    def __init__(self, events: List[Dict[str, Any]] = None, subscriptions: List[str] = None):
         """
         Initialize server with events.
         
         Args:
             events: List of calendar events
+            subscriptions: List of all subscription names (including empty ones)
         """
         self.app = Flask(__name__)
         self.events = events or []
+        self.all_subscriptions = subscriptions or []
         self.subscription_events = self._group_events_by_subscription()
         self.setup_routes()
     
     def _group_events_by_subscription(self) -> Dict[str, List[Dict[str, Any]]]:
         """Group events by subscription for separate feeds."""
-        groups = {}
+        groups = {sub: [] for sub in self.all_subscriptions}
         for event in self.events:
             sub = event.get('subscription', 'unknown')
-            if sub not in groups:
-                groups[sub] = []
-            groups[sub].append(event)
+            if sub in groups:
+                groups[sub].append(event)
         return groups
     
     def _create_slug(self, subscription: str) -> str:
@@ -128,14 +129,17 @@ class CalDavServer:
         response.headers['Content-Disposition'] = f'attachment; filename="{name.replace(" ", "_")}.ics"'
         return response
     
-    def update_events(self, events: List[Dict[str, Any]]):
+    def update_events(self, events: List[Dict[str, Any]], subscriptions: List[str] = None):
         """
         Update the events in the calendar.
         
         Args:
             events: New list of events
+            subscriptions: New list of subscriptions
         """
         self.events = events
+        if subscriptions is not None:
+            self.all_subscriptions = subscriptions
         self.subscription_events = self._group_events_by_subscription()
     
     def run(self, host: str = '0.0.0.0', port: int = 5000):
@@ -149,14 +153,15 @@ class CalDavServer:
         print(f"Serving calendar at http://{host}:{port}/calendar.ics")
         self.app.run(host=host, port=port)
 
-def setup_caldav_server(events: List[Dict[str, Any]]) -> CalDavServer:
+def setup_caldav_server(events: List[Dict[str, Any]], subscriptions: List[str] = None) -> CalDavServer:
     """
     Convenience function to set up the CalDav server.
     
     Args:
         events: Initial events for the calendar
+        subscriptions: List of all subscription names
         
     Returns:
         Configured CalDavServer instance
     """
-    return CalDavServer(events)
+    return CalDavServer(events, subscriptions)

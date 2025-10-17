@@ -55,7 +55,7 @@ class EventScraper:
             print(f"Error scraping {self.url}: {e}")
             return []
     
-    def scrape_calendar(self, url: str, course: str) -> List[Dict[str, Any]]:
+    def scrape_calendar(self, url: str, course: str) -> tuple[List[Dict[str, Any]], List[str]]:
         """
         Scrape events from a specific calendar page.
         
@@ -64,9 +64,10 @@ class EventScraper:
             course: The course code
             
         Returns:
-            List of event dictionaries
+            Tuple of (events list, subscriptions list)
         """
         events = []
+        subscriptions = []
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -82,6 +83,7 @@ class EventScraper:
                     continue
                 
                 subscription = title
+                subscriptions.append(subscription)
                 
                 # Find the next table
                 table = header.find_next('table')
@@ -173,25 +175,27 @@ class EventScraper:
         except requests.RequestException as e:
             print(f"Error scraping calendar {url}: {e}")
         
-        return events
+        return events, subscriptions
     
-    def scrape(self) -> List[Dict[str, Any]]:
+    def scrape(self) -> tuple[List[Dict[str, Any]], List[str]]:
         """
         Scrape all events from caratterizzanti calendars.
         
         Returns:
-            List of event dictionaries
+            Tuple of (events list, all subscriptions list)
         """
         caratterizzanti = self.scrape_caratterizzanti()
         all_events = []
+        all_subscriptions = []
         for item in caratterizzanti:
             course = item['course']
             url = item['link']
-            events = self.scrape_calendar(url, course)
+            events, subscriptions = self.scrape_calendar(url, course)
             all_events.extend(events)
-        return all_events
+            all_subscriptions.extend(subscriptions)
+        return all_events, all_subscriptions
 
-def scrape_events(url: str = "https://ianua.unige.it/calendari-lezioni-2025-2026") -> List[Dict[str, Any]]:
+def scrape_events(url: str = "https://ianua.unige.it/calendari-lezioni-2025-2026") -> tuple[List[Dict[str, Any]], List[str]]:
     """
     Convenience function to scrape events from a URL.
     
@@ -199,7 +203,7 @@ def scrape_events(url: str = "https://ianua.unige.it/calendari-lezioni-2025-2026
         url: The URL to scrape events from
         
     Returns:
-        List of event dictionaries
+        Tuple of (events list, subscriptions list)
     """
     scraper = EventScraper(url)
     return scraper.scrape()

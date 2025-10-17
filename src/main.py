@@ -10,10 +10,10 @@ from src.caldav_server.server import setup_caldav_server
 
 def main():
     # Initial scrape
-    events = scrape_events()
+    events, subscriptions = scrape_events()
     
     # Setup CalDav server with events
-    server = setup_caldav_server(events)
+    server = setup_caldav_server(events, subscriptions)
     
     # Run scheduler for periodic updates
     scheduler = BackgroundScheduler()
@@ -27,8 +27,8 @@ def main():
         scheduler.shutdown()
 
 def update_calendar(server):
-    events = scrape_events()
-    server.update_events(events)
+    events, subscriptions = scrape_events()
+    server.update_events(events, subscriptions)
 
 if __name__ == "__main__":
     main()
