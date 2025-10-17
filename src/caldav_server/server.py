@@ -8,6 +8,7 @@ from icalendar import Calendar, Event
 from datetime import datetime
 from typing import List, Dict, Any
 import re
+from collections import defaultdict
 from urllib.parse import quote
 
 class CalDavServer:
@@ -79,18 +80,26 @@ class CalDavServer:
             </li>
             '''
             
-            # Individual subscriptions
-            for sub_name in sorted(self.subscription_events.keys()):
-                slug = self._create_slug(sub_name)
-                cal_url = f"{base_url}/calendar/{slug}.ics"
-                html += f'''
-                <li>
-                    <strong>{sub_name}</strong><br>
-                    <a href="{cal_url}">Download .ics</a> |
-                    <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar/{slug}.ics">Add to Google Calendar</a> |
-                    <a href="webcal://{base_url}/calendar/{slug}.ics">Add to iCloud Calendar</a>
-                </li>
-                '''
+            # Individual subscriptions grouped by class
+            classes = defaultdict(list)
+            for sub_name in self.subscription_events.keys():
+                class_name = sub_name.split()[0]  # First word is the class
+                classes[class_name].append(sub_name)
+            
+            for class_name in sorted(classes.keys()):
+                html += f"<li><h2>{class_name}</h2><ul>"
+                for sub_name in sorted(classes[class_name]):
+                    slug = self._create_slug(sub_name)
+                    cal_url = f"{base_url}/calendar/{slug}.ics"
+                    html += f'''
+                    <li>
+                        <strong>{sub_name}</strong><br>
+                        <a href="{cal_url}">Download .ics</a> |
+                        <a href="https://calendar.google.com/calendar/u/0/r?cid=webcal://{base_url}/calendar/{slug}.ics">Add to Google Calendar</a> |
+                        <a href="webcal://{base_url}/calendar/{slug}.ics">Add to iCloud Calendar</a>
+                    </li>
+                    '''
+                html += "</ul></li>"
             html += "</ul>"
             return Response(html, mimetype='text/html')
     
