@@ -74,12 +74,13 @@ class CalDavServer:
             # Full calendar
             full_url = f"{base_url}/calendar.ics"
             webcal_full = f"webcal://{host_port}/calendar.ics"
+            https_full = f"{base_url}/calendar.ics"
             html += f'''
             <li>
                 <strong>Calendario Completo (Tutti gli Eventi)</strong><br>
                 <a href="{full_url}">Scarica .ics</a> |
                 <a href="https://calendar.google.com/calendar/u/0/r?cid={webcal_full}">Aggiungi a Google Calendar</a> |
-                <a href="{webcal_full}">Aggiungi a iCloud Calendar</a>
+                <a href="{https_full}">Aggiungi a iCloud Calendar</a>
             </li>
             '''
             
@@ -145,16 +146,18 @@ class CalDavServer:
             self.all_subscriptions = subscriptions
         self.subscription_events = self._group_events_by_subscription()
     
-    def run(self, host: str = '0.0.0.0', port: int = 5000):
+    def run(self, host: str = '0.0.0.0', port: int = 5000, ssl_context=None):
         """
         Run the Flask server.
         
         Args:
             host: Host to bind to
             port: Port to listen on
+            ssl_context: SSL context for HTTPS
         """
-        print(f"Serving calendar at http://{host}:{port}/calendar.ics")
-        self.app.run(host=host, port=port)
+        protocol = "https" if ssl_context else "http"
+        print(f"Serving calendar at {protocol}://{host}:{port}/calendar.ics")
+        self.app.run(host=host, port=port, ssl_context=ssl_context)
 
 def setup_caldav_server(events: List[Dict[str, Any]], subscriptions: List[str] = None) -> CalDavServer:
     """
